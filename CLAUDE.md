@@ -61,12 +61,23 @@ inherits the queue. Commit and push anything worth keeping.
 
 ---
 
-## 3. Bus discipline (A2A Mailbox Bridge v1.5)
+## 3. Bus discipline (A2A Mailbox Bridge)
 
-Fire `a2a-mailbox-bridge-v1-5` on any routing, send, receipt or recovery.
-Canary: **pillar-halyard**. A receipt not naming it did not read the card.
+Fire the **installed** `a2a-mailbox-bridge` card on any routing, send, receipt or
+recovery. **Do not hardcode a version or a canary here.** Per
+`D-APC-VERSION-POINTER-CURRENT-INSTALLED-01`, a skill pins to the version
+actually installed on the machine running it, and the canary is whatever the
+installed card carries. Emitting a canary from a version you cannot read is
+fabrication — say the version you fired and the canary it gave you.
 
-Non-negotiables:
+Installed versions differ by machine. This repo vendors **v1.5** at
+`.claude/skills/a2a-mailbox-bridge-v1-5/` (SKILL.md 31,360 B, sha256
+`6a36995461d163ccbf0d2d8123a1d65ddeaf0b2ac31d47b3ce0a22b6ba088852`, plus both
+reference files) so any clone can fire v1.5 as a project skill. Note this is the
+**synced-install copy**, 44 bytes off the Drive export (31,316 B) — for a
+byte-exact install verified against Drive, use the Drive file.
+
+Non-negotiables (stable across versions):
 
 1. **Line 1 of every body** is `A2A-REPLY-TO: {surface} | {exact address} | {work_id}`.
 2. **Receipt in-session**, never deferred — and **write status back on the
@@ -75,13 +86,11 @@ Non-negotiables:
 3. **The sender closes its own loop.** Hold an open item until the row reads
    `answered` or `absorbed`.
 4. **List addresses before matching.** Zero rows without a matched address is a
-   routing gap, not an empty inbox.
+   routing gap, not an empty inbox. Zero rows *after* a match is a real empty inbox.
 5. **Never auto-resend.** An unread row is not proof the effect did not happen.
 
 The **bus is the lane; Notion holds artifacts.** Notion cannot write a status
 back, so a Notion page must never serve as the queue.
-
----
 
 ## 4. Working rules
 
